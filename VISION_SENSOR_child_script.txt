@@ -1,0 +1,28 @@
+ if (sim_call_type==sim.syscb_init) then 
+--depthCam=sim.getObjectHandle('kinect_depth')
+--depthView=sim.floatingViewAdd(0.9,0.9,0.2,0.2,0)
+--colorCam=sim.getObjectHandle('Vision_sensor_rgb')
+--colowView=sim.floatingViewAdd(0.69,0.9,0.2,0.2,0)
+--glass=sim.getObjectHandle('kinect_glass')
+Vision_sensor=sim.getObjectHandle('Vision_sensor')
+--local res,nearClippingPlane=sim.getObjectFloatParameter(depthCam,sim.visionfloatparam_near_clipping)
+--local res,farClippingPlane=sim.getObjectFloatParameter(depthCam,sim.visionfloatparam_far_clipping)
+--distance=nearClippingPlane+depthValue*(farClippingPlane-nearClippingPlane)
+--print(distance)
+
+
+end
+
+if(sim_call_type==sim.syscb_sensing) then
+--simRemoteApi.start(19999)
+rgbTopicName=simExtROS_enablePublisher('/rgb/image_raw',1,simros_strmcmd_get_vision_sensor_image,Vision_sensor,0,'')
+--DepthTopicName=simExtROS_enablePublisher('/depth/image_raw',1,simros_strmcmd_get_vision_sensor_image,depthCam,0,'')
+--infoTopicName=simExtROS_enablePublisher('cameraInfo',1,simros_strmcmd_get_vision_sensor_info,colorCam,0,'')
+--distanceTopicName=simExtROS_enablePublisher('/distance',1,simros_strmcmd_set_float_signal,distance,0,'')
+
+end
+
+if (sim_call_type==sim.syscb_cleanup) then
+end
+
+

@@ -1,0 +1,42 @@
+if (sim_call_type==sim.syscb_init) then
+	usensors={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
+	sonarpublisher={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
+	for i=1,16,1 do
+		usensors[i]=sim.getObjectHandle("Pioneer_p3dx_ultrasonicSensor"..i)
+sonarpublisher[i]=simExtROS_enablePublisher('/sonar'..i, 0,simros_strmcmd_read_proximity_sensor,usensors[i], -1, '')
+	end 
+
+	motorLeft=sim.getObjectHandle("Pioneer_p3dx_leftMotor")
+	motorRight=sim.getObjectHandle("Pioneer_p3dx_rightMotor")
+
+--Input
+simExtROS_enableSubscriber('/linear_vel', 0,simros_strmcmd_set_float_signal, -1,-1,'v1')
+simExtROS_enableSubscriber('/angular_vel', 0,simros_strmcmd_set_float_signal, -1,-1,'va')
+--output
+robotHandler=sim.getObjectHandle('Pioneer_p3dx') -- body position
+odomPublisher=simExtROS_enablePublisher('/odometry',1,simros_strmcmd_get_odom_data,robotHandler,-1,'')
+axes_length = 0.331;
+	wheel_radius = 0.0970;
+end
+
+if (sim_call_type==sim.syscb_cleanup) then
+end
+
+if (sim_call_type==sim.syscb_actuation) then
+	local v_1 = sim.getFloatSignal( 'v1' )
+	local v_a = sim.getFloatSignal( 'va' )
+
+	if not v_1 then
+		v_1 = 0.0
+	end 
+
+	if not v_a then
+		v_a = 0.0
+	end
+	local v_left = 0.0
+	local v_right = 0.0
+	v_left = (1/wheel_radius)*(v_1-axes_length/2*v_a)
+	v_right = (1/wheel_radius)*(v_1+axes_length/2*v_a)
+	sim.setJointTargetVelocity(motorLeft,v_left)
+	sim.setJointTargetVelocity(motorRight,v_right)
+end
